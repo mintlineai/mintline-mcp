@@ -15,10 +15,16 @@ export function createClient(apiKey) {
       body: body ? JSON.stringify(body) : undefined,
     });
 
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    }
 
     if (!data.success) {
-      throw new Error(data.error?.message || "Request failed");
+      const errorMsg = data.error?.message || data.message || `Request failed (${res.status})`;
+      throw new Error(errorMsg);
     }
 
     return data;
