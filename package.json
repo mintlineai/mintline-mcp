@@ -2,14 +2,19 @@
   "name": "@mintline/mcp",
   "version": "1.0.0",
   "description": "MCP server for Mintline - connect AI assistants to your receipts and transactions",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "bin": {
-    "mintline-mcp": "./bin/mintline-mcp"
+    "mintline-mcp": "./dist/cli.js"
   },
   "type": "module",
   "scripts": {
-    "start": "node src/index.js"
+    "build": "esbuild src/index.js --bundle --platform=node --format=esm --outfile=dist/index.js --external:@modelcontextprotocol/sdk && node scripts/build-cli.js",
+    "prepublishOnly": "npm run build",
+    "start": "node dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [
     "mcp",
     "mintline",
@@ -24,5 +29,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2"
   }
 }
