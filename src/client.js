@@ -82,5 +82,35 @@ export function createClient(apiKey) {
     async rejectMatch(id, reason) {
       return request("POST", `/api/matches/${id}/reject`, { reason });
     },
+
+    // Analytics
+    async getSpendingSummary(params = {}) {
+      const query = new URLSearchParams();
+      if (params.groupBy) query.set("groupBy", params.groupBy);
+      if (params.dateFrom) query.set("dateFrom", params.dateFrom);
+      if (params.dateTo) query.set("dateTo", params.dateTo);
+      if (params.vendorId) query.set("vendorId", params.vendorId);
+      if (params.limit) query.set("limit", params.limit);
+      const qs = query.toString();
+      return request("GET", `/api/analytics/spending${qs ? `?${qs}` : ""}`);
+    },
+
+    async getTopVendors(params = {}) {
+      const query = new URLSearchParams();
+      if (params.limit) query.set("limit", params.limit);
+      const qs = query.toString();
+      return request("GET", `/api/analytics/top-vendors${qs ? `?${qs}` : ""}`);
+    },
+
+    async getSpendingTrends(params = {}) {
+      const query = new URLSearchParams();
+      if (params.months) query.set("months", params.months);
+      const qs = query.toString();
+      return request("GET", `/api/analytics/trends${qs ? `?${qs}` : ""}`);
+    },
+
+    async getUnmatchedSummary() {
+      return request("GET", `/api/analytics/unmatched`);
+    },
   };
 }

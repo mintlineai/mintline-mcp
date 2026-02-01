@@ -138,6 +138,70 @@ export const tools = [
       required: ["id"],
     },
   },
+  {
+    name: "spending_summary",
+    description: "Get spending summary with flexible grouping. Use this to answer questions like 'How much did I spend this month?' or 'What are my expenses by vendor?'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        groupBy: {
+          type: "string",
+          enum: ["total", "vendor", "month", "week", "day"],
+          description: "How to group the spending data (default: total)",
+        },
+        dateFrom: {
+          type: "string",
+          description: "Start date (YYYY-MM-DD)",
+        },
+        dateTo: {
+          type: "string",
+          description: "End date (YYYY-MM-DD)",
+        },
+        vendorId: {
+          type: "string",
+          description: "Filter by specific vendor ID",
+        },
+        limit: {
+          type: "number",
+          description: "Max results for grouped queries (default 20)",
+        },
+      },
+    },
+  },
+  {
+    name: "top_vendors",
+    description: "Get top vendors ranked by total spending. Use this to answer 'Who are my biggest vendors?' or 'Where do I spend the most?'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        limit: {
+          type: "number",
+          description: "Number of vendors to return (default 10)",
+        },
+      },
+    },
+  },
+  {
+    name: "spending_trends",
+    description: "Get monthly spending trends over time. Use this to answer 'How has my spending changed?' or 'Show me spending trends'",
+    inputSchema: {
+      type: "object",
+      properties: {
+        months: {
+          type: "number",
+          description: "Number of months to include (default 6)",
+        },
+      },
+    },
+  },
+  {
+    name: "unmatched_summary",
+    description: "Get a summary of items needing attention: unmatched receipts, transactions without receipts, and proposed matches to review. Use this for 'What needs my attention?' or 'Do I have unmatched expenses?'",
+    inputSchema: {
+      type: "object",
+      properties: {},
+    },
+  },
 ];
 
 export async function handleTool(client, name, args) {
@@ -194,6 +258,36 @@ export async function handleTool(client, name, args) {
     case "reject_match": {
       await client.rejectMatch(args.id, args.reason);
       return `Match ${args.id} rejected.${args.reason ? ` Reason: ${args.reason}` : ""}`;
+    }
+
+    case "spending_summary": {
+      const result = await client.getSpendingSummary({
+        groupBy: args.groupBy || "total",
+        dateFrom: args.dateFrom,
+        dateTo: args.dateTo,
+        vendorId: args.vendorId,
+        limit: args.limit || 20,
+      });
+      return formatSpendingSummary(result.data, args.groupBy || "total");
+    }
+
+    case "top_vendors": {
+      const result = await client.getTopVendors({
+        limit: args.limit || 10,
+      });
+      return formatTopVendors(result.data.vendors);
+    }
+
+    case "spending_trends": {
+      const result = await client.getSpendingTrends({
+        months: args.months || 6,
+      });
+      return formatSpendingTrends(result.data.trends);
+    }
+
+    case "unmatched_summary": {
+      const result = await client.getUnmatchedSummary();
+      return formatUnmatchedSummary(result.data);
     }
 
     default:
@@ -260,4 +354,82 @@ function formatMatches(matches) {
   return matches.map((m) =>
     `• ${m.id}: Receipt ${m.receiptId} ↔ Transaction ${m.transactionId} (${Math.round(m.confidenceScore * 100)}% confidence) [${m.status}]`
   ).join("\n");
+}
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(amount);
+}
+
+function formatSpendingSummary(data, groupBy) {
+  if (groupBy === "total" && data.summary) {
+    const s = data.summary;
+    let text = `Spending Summary (${data.period.from} to ${data.period.to})\n`;
+    text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `Total Spent: ${formatCurrency(s.totalAmount)}\n`;
+    text += `Receipt Count: ${s.receiptCount}\n`;
+    text += `Average: ${formatCurrency(s.averageAmount)}\n`;
+    text += `Min: ${formatCurrency(s.minAmount)} | Max: ${formatCurrency(s.maxAmount)}`;
+    return text;
+  }
+
+  if (!data.data?.length) return "No spending data found for this period.";
+
+  let text = `Spending by ${groupBy} (${data.period.from} to ${data.period.to})\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+  if (groupBy === "vendor") {
+    data.data.forEach((item, i) => {
+      text += `${i + 1}. ${item.vendorName}: ${formatCurrency(item.totalAmount)} (${item.receiptCount} receipts)\n`;
+    });
+  } else {
+    data.data.forEach((item) => {
+      text += `• ${item.period}: ${formatCurrency(item.totalAmount)} (${item.receiptCount} receipts)\n`;
+    });
+  }
+
+  return text;
+}
+
+function formatTopVendors(vendors) {
+  if (!vendors?.length) return "No vendor data found.";
+
+  let text = `Top Vendors by Spending\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+  vendors.forEach((v, i) => {
+    text += `${i + 1}. ${v.name}: ${formatCurrency(v.total)} (${v.count} receipts)\n`;
+  });
+
+  return text;
+}
+
+function formatSpendingTrends(trends) {
+  if (!trends?.length) return "No trend data found.";
+
+  let text = `Monthly Spending Trends\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+  trends.forEach((t) => {
+    const bar = "█".repeat(Math.min(20, Math.round(t.total / 100)));
+    text += `${t.month}: ${formatCurrency(t.total)} ${bar}\n`;
+  });
+
+  return text;
+}
+
+function formatUnmatchedSummary(data) {
+  let text = `Action Items Summary\n`;
+  text += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+  text += `📋 Proposed Matches to Review: ${data.proposedMatches.count}\n`;
+  text += `📄 Unmatched Receipts: ${data.unmatchedReceipts.count} (${formatCurrency(data.unmatchedReceipts.totalAmount)})\n`;
+  text += `💳 Unmatched Transactions: ${data.unmatchedTransactions.count} (${formatCurrency(data.unmatchedTransactions.totalAmount)})\n`;
+  text += `⚠️  Large Transactions (>${formatCurrency(data.largeUnmatchedTransactions.threshold)}) without receipts: ${data.largeUnmatchedTransactions.count}\n\n`;
+
+  text += `${data.actionItems.message}`;
+
+  return text;
 }
