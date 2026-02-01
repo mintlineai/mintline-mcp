@@ -1,0 +1,28 @@
+{
+  "name": "mintline-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Mintline - connect AI assistants to your receipts and transactions",
+  "main": "src/index.js",
+  "bin": {
+    "mintline-mcp": "./bin/mintline-mcp"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "mintline",
+    "receipts",
+    "ai",
+    "claude"
+  ],
+  "author": "Mintline",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
