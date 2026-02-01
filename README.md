@@ -5,7 +5,7 @@ Connect AI assistants to your Mintline receipts and transactions via the [Model 
 ## Installation
 
 ```bash
-npm install -g mintline-mcp
+npm install -g @mintline/mcp
 ```
 
 ## Setup

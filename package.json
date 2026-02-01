@@ -1,5 +1,5 @@
 {
-  "name": "mintline-mcp",
+  "name": "@mintline/mcp",
   "version": "1.0.0",
   "description": "MCP server for Mintline - connect AI assistants to your receipts and transactions",
   "main": "src/index.js",
