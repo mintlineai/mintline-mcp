@@ -37,24 +37,84 @@ The Mintline tools will now be available.
 
 ## Available Tools
 
+### Receipts & Transactions
+
 | Tool | Description |
 |------|-------------|
-| `list_receipts` | Search and filter receipts by vendor, status |
-| `get_receipt` | Get receipt details with line items |
-| `list_transactions` | Search and filter bank transactions |
-| `get_transaction` | Get transaction details |
+| `list_receipts` | Search and filter receipts by vendor name, date range, or match status |
+| `get_receipt` | Get detailed receipt info including line items and matched transaction |
+| `list_transactions` | Search and filter bank transactions by description or status |
+| `get_transaction` | Get detailed transaction information |
 | `list_statements` | List uploaded bank statements |
-| `list_matches` | View proposed receipt-transaction matches |
-| `confirm_match` | Confirm a proposed match |
-| `reject_match` | Reject a proposed match |
+
+### Matching
+
+| Tool | Description |
+|------|-------------|
+| `list_matches` | View proposed matches between receipts and transactions |
+| `confirm_match` | Confirm a proposed match (links receipt to transaction permanently) |
+| `reject_match` | Reject a proposed match (won't be suggested again) |
+
+### Analytics
+
+| Tool | Description |
+|------|-------------|
+| `spending_summary` | Get spending totals with flexible grouping (total, vendor, month, week, day) |
+| `top_vendors` | Get top vendors ranked by total spending |
+| `spending_trends` | Get monthly spending trends over time |
+| `unmatched_summary` | Get summary of items needing attention (unmatched receipts, transactions, proposed matches) |
+
+## Tool Parameters
+
+### list_receipts
+- `search` (string) - Search by vendor name
+- `status` (string) - Filter: "all", "matched", "unmatched", "hidden"
+- `limit` (number) - Max results (default: 20)
+
+### list_transactions
+- `search` (string) - Search by transaction description
+- `status` (string) - Filter: "all", "matched", "unmatched", "hidden"
+- `statementId` (string) - Filter by bank statement ID
+- `limit` (number) - Max results (default: 20)
+
+### list_matches
+- `status` (string) - Filter: "proposed", "confirmed", "rejected" (default: proposed)
+- `limit` (number) - Max results (default: 20)
+
+### spending_summary
+- `groupBy` (string) - "total", "vendor", "month", "week", "day" (default: total)
+- `dateFrom` (string) - Start date (YYYY-MM-DD)
+- `dateTo` (string) - End date (YYYY-MM-DD)
+- `vendorId` (string) - Filter by specific vendor
+- `limit` (number) - Max results for grouped queries (default: 20)
+
+### top_vendors
+- `limit` (number) - Number of vendors to return (default: 10)
+
+### spending_trends
+- `months` (number) - Number of months to include (default: 6)
 
 ## Example Prompts
 
+### Receipts & Transactions
 - "Show me my unmatched receipts"
 - "Find receipts from Amazon"
-- "What transactions need matching?"
-- "Confirm the top match"
+- "List transactions from my Chase statement"
 - "Show details for receipt rcpt_01abc123"
+
+### Matching
+- "What matches need my review?"
+- "Confirm the top match"
+- "Reject match mtch_01xyz789 - wrong vendor"
+
+### Analytics
+- "How much did I spend this month?"
+- "What are my top vendors by spending?"
+- "Show me spending trends for the last 6 months"
+- "Break down my spending by week"
+- "How much did I spend at AWS last quarter?"
+- "What needs my attention?" (shows unmatched items)
+- "Do I have any large transactions without receipts?"
 
 ## Environment Variables
 
