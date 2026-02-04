@@ -41,62 +41,11 @@ The Mintline tools will now be available.
 
 ## Available Tools
 
-### Receipts & Transactions
+Tools are loaded dynamically from the Mintline API and stay automatically in sync.
 
-| Tool | Description |
-|------|-------------|
-| `list_receipts` | Search and filter receipts by vendor name, date range, or match status |
-| `get_receipt` | Get detailed receipt info including line items and matched transaction |
-| `list_transactions` | Search and filter bank transactions by description or status |
-| `get_transaction` | Get detailed transaction information |
-| `list_statements` | List uploaded bank statements |
-
-### Matching
-
-| Tool | Description |
-|------|-------------|
-| `list_matches` | View proposed matches between receipts and transactions |
-| `confirm_match` | Confirm a proposed match (links receipt to transaction permanently) |
-| `reject_match` | Reject a proposed match (won't be suggested again) |
-
-### Analytics
-
-| Tool | Description |
-|------|-------------|
-| `spending_summary` | Get spending totals with flexible grouping (total, vendor, month, week, day) |
-| `top_vendors` | Get top vendors ranked by total spending |
-| `spending_trends` | Get monthly spending trends over time |
-| `unmatched_summary` | Get summary of items needing attention (unmatched receipts, transactions, proposed matches) |
-
-## Tool Parameters
-
-### list_receipts
-- `search` (string) - Search by vendor name
-- `status` (string) - Filter: "all", "matched", "unmatched", "hidden"
-- `limit` (number) - Max results (default: 20)
-
-### list_transactions
-- `search` (string) - Search by transaction description
-- `status` (string) - Filter: "all", "matched", "unmatched", "hidden"
-- `statementId` (string) - Filter by bank statement ID
-- `limit` (number) - Max results (default: 20)
-
-### list_matches
-- `status` (string) - Filter: "proposed", "confirmed", "rejected" (default: proposed)
-- `limit` (number) - Max results (default: 20)
-
-### spending_summary
-- `groupBy` (string) - "total", "vendor", "month", "week", "day" (default: total)
-- `dateFrom` (string) - Start date (YYYY-MM-DD)
-- `dateTo` (string) - End date (YYYY-MM-DD)
-- `vendorId` (string) - Filter by specific vendor
-- `limit` (number) - Max results for grouped queries (default: 20)
-
-### top_vendors
-- `limit` (number) - Number of vendors to return (default: 10)
-
-### spending_trends
-- `months` (number) - Number of months to include (default: 6)
+**View all available tools:**
+- Documentation: [mintline.ai/docs/mcp](https://mintline.ai/docs/mcp)
+- CLI: `npx @mintline/mcp --list-tools`
 
 ## Example Prompts
 
