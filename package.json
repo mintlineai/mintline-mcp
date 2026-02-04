@@ -28,6 +28,10 @@
   ],
   "author": "Mintline",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mintlineai/mintline-mcp"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
