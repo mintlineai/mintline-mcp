@@ -6,12 +6,12 @@
     "url": "https://github.com/mintlineai/mintline-mcp",
     "source": "github"
   },
-  "version": "1.1.5",
+  "version": "1.1.6",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@mintline/mcp",
-      "version": "1.1.5",
+      "version": "1.1.6",
       "transport": {
         "type": "stdio"
       }
