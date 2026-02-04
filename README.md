@@ -2,6 +2,10 @@
 
 Connect AI assistants to your Mintline receipts and transactions via the [Model Context Protocol](https://modelcontextprotocol.io).
 
+[![MCP Registry](https://img.shields.io/badge/MCP-Registry-blue)](https://registry.modelcontextprotocol.io/servers/io.github.mintlineai/mintline-mcp)
+[![mcp.so](https://img.shields.io/badge/mcp.so-Listed-green)](https://mcp.so/server/mintline-mcp)
+[![npm](https://img.shields.io/npm/v/@mintline/mcp)](https://www.npmjs.com/package/@mintline/mcp)
+
 ## Installation
 
 ```bash
